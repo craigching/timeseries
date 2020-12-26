@@ -3,20 +3,15 @@ package lm
 import "gonum.org/v1/gonum/mat"
 
 type LinearModel struct {
-	X     [][]float64
-	Y     []float64
 	Coeff []float64
 }
 
-func New(x [][]float64, y []float64) *LinearModel {
-	return &LinearModel{
-		X: x,
-		Y: y,
-	}
+func New() *LinearModel {
+	return &LinearModel{}
 }
 
-func (m *LinearModel) Fit() {
-	c := LinearRegression(m.X, m.Y)
+func (m *LinearModel) Fit(X [][]float64, y []float64) {
+	c := LinearRegression(X, y)
 	m.Coeff = c
 }
 

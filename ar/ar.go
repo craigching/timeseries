@@ -4,19 +4,20 @@ import "github.com/craigching/linear-regression/lm"
 
 type AutoRegressiveModel struct {
 	lm.LinearModel
+	y []float64
 }
 
-func New(x []float64) *AutoRegressiveModel {
+func New() *AutoRegressiveModel {
 	return &AutoRegressiveModel{
-		LinearModel: lm.LinearModel{
-			X: [][]float64{x[:len(x)-1]},
-			Y: x[1:],
-		},
+		LinearModel: lm.LinearModel{},
 	}
 }
 
-func (m *AutoRegressiveModel) Fit() {
-	c := lm.LinearRegression(m.X, m.Y)
+func (m *AutoRegressiveModel) Fit(x []float64) {
+	X := [][]float64{x[:len(x)-1]}
+	// Save y so we can predict from it
+	m.y = x[1:]
+	c := lm.LinearRegression(X, m.y)
 	m.Coeff = c
 }
 
@@ -26,7 +27,7 @@ func (m *AutoRegressiveModel) Predict(n int) []float64 {
 	for i := 0; i < n; i++ {
 		var p float64
 		if len(pred) == 0 {
-			p = m.Y[len(m.Y)-1]
+			p = m.y[len(m.y)-1]
 		} else {
 			p = pred[i-1]
 		}

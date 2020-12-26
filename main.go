@@ -11,13 +11,13 @@ import (
 func main() {
 
 	X, y, _ := datasets.Mtcars()
-	lm := lm.New(X, y)
-	lm.Fit()
+	lm := lm.New()
+	lm.Fit(X, y)
 	fmt.Println("coeffs:", lm.Coeff)
 
 	x := datasets.Lh()
-	ar := ar.New(x)
-	ar.Fit()
+	ar := ar.New()
+	ar.Fit(x)
 	pred := ar.Predict(10)
 	fmt.Println("coeffs:", ar.Coeff)
 	fmt.Println("pred:", pred)
