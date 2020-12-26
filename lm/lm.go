@@ -2,19 +2,13 @@ package lm
 
 import "gonum.org/v1/gonum/mat"
 
-type Model interface {
-	Fit()
-	Predict(int) []float64
-	Coeff() []float64
-}
-
 type LinearModel struct {
-	X [][]float64
-	Y []float64
-	C []float64
+	X     [][]float64
+	Y     []float64
+	Coeff []float64
 }
 
-func New(x [][]float64, y []float64) Model {
+func New(x [][]float64, y []float64) *LinearModel {
 	return &LinearModel{
 		X: x,
 		Y: y,
@@ -23,16 +17,12 @@ func New(x [][]float64, y []float64) Model {
 
 func (m *LinearModel) Fit() {
 	c := LinearRegression(m.X, m.Y)
-	m.C = c
+	m.Coeff = c
 }
 
 func (m *LinearModel) Predict(n int) []float64 {
 	// TODO
 	return []float64{}
-}
-
-func (m *LinearModel) Coeff() []float64 {
-	return m.C
 }
 
 func LinearRegression(X [][]float64, y []float64) []float64 {

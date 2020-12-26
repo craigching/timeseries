@@ -6,7 +6,7 @@ type AutoRegressiveModel struct {
 	lm.LinearModel
 }
 
-func New(x []float64) lm.Model {
+func New(x []float64) *AutoRegressiveModel {
 	return &AutoRegressiveModel{
 		LinearModel: lm.LinearModel{
 			X: [][]float64{x[:len(x)-1]},
@@ -17,7 +17,7 @@ func New(x []float64) lm.Model {
 
 func (m *AutoRegressiveModel) Fit() {
 	c := lm.LinearRegression(m.X, m.Y)
-	m.C = c
+	m.Coeff = c
 }
 
 func (m *AutoRegressiveModel) Predict(n int) []float64 {
@@ -31,7 +31,7 @@ func (m *AutoRegressiveModel) Predict(n int) []float64 {
 			p = pred[i-1]
 		}
 		// TODO need to handle order > 1
-		pred = append(pred, p*m.C[1]+m.C[0])
+		pred = append(pred, p*m.Coeff[1]+m.Coeff[0])
 	}
 
 	return pred
