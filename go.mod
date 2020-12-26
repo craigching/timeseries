@@ -1,4 +1,4 @@
-module github.com/craigching/linear-regression
+module github.com/craigching/timeseries
 
 go 1.15
 

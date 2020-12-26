@@ -1,6 +1,6 @@
 package ar
 
-import "github.com/craigching/linear-regression/lm"
+import "github.com/craigching/timeseries/lm"
 
 type AutoRegressiveModel struct {
 	lm.LinearModel

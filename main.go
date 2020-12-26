@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/craigching/linear-regression/ar"
-	"github.com/craigching/linear-regression/datasets"
-	"github.com/craigching/linear-regression/lm"
+	"github.com/craigching/timeseries/ar"
+	"github.com/craigching/timeseries/datasets"
+	"github.com/craigching/timeseries/lm"
 )
 
 func main() {
