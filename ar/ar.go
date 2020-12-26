@@ -1,39 +1,59 @@
 package ar
 
-import "github.com/craigching/timeseries/lm"
+import (
+	"github.com/craigching/timeseries/lm"
+)
 
 type AutoRegressiveModel struct {
 	lm.LinearModel
-	y []float64
+	order int
+	y     []float64
 }
 
-func New() *AutoRegressiveModel {
+func New(order int) *AutoRegressiveModel {
 	return &AutoRegressiveModel{
 		LinearModel: lm.LinearModel{},
+		order:       order,
 	}
 }
 
 func (m *AutoRegressiveModel) Fit(x []float64) {
-	X := [][]float64{x[:len(x)-1]}
+	var X [][]float64
+	// n is the length of the lag arrays
+	n := len(x) - m.order
+	// build lags
+	for i := 0; i < m.order; i++ {
+		X = append(X, lag(x, i+1, n))
+	}
 	// Save y so we can predict from it
-	m.y = x[1:]
+	m.y = x[m.order:]
 	c := lm.LinearRegression(X, m.y)
 	m.Coeff = c
 }
 
+func lag(x []float64, shift, n int) []float64 {
+	head := len(x) - n - shift
+	return x[head : len(x)-shift]
+}
+
 func (m *AutoRegressiveModel) Predict(n int) []float64 {
-	pred := []float64{}
+
+	// Reverse the coefficients when multiplying to match what R's ar() is doing
+	coeff := make([]float64, len(m.Coeff)-1)
+	copy(coeff, m.Coeff[1:])
+	for i, j := 0, len(coeff)-1; i < j; i, j = i+1, j-1 {
+		coeff[i], coeff[j] = coeff[j], coeff[i]
+	}
+	xint := m.Coeff[0]
 
 	for i := 0; i < n; i++ {
-		var p float64
-		if len(pred) == 0 {
-			p = m.y[len(m.y)-1]
-		} else {
-			p = pred[i-1]
+		terms := m.y[len(m.y)-m.order:]
+		sum := xint
+		for i := 0; i < m.order; i++ {
+			sum += terms[i] * coeff[i]
 		}
-		// TODO need to handle order > 1
-		pred = append(pred, p*m.Coeff[1]+m.Coeff[0])
+		m.y = append(m.y, sum)
 	}
 
-	return pred
+	return m.y[len(m.y)-n:]
 }

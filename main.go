@@ -16,7 +16,7 @@ func main() {
 	fmt.Println("coeffs:", lm.Coeff)
 
 	x := datasets.Lh()
-	ar := ar.New()
+	ar := ar.New(1)
 	ar.Fit(x)
 	pred := ar.Predict(10)
 	fmt.Println("coeffs:", ar.Coeff)
