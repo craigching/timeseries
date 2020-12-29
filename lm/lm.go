@@ -1,9 +1,12 @@
 package lm
 
-import "gonum.org/v1/gonum/mat"
+import (
+	"gonum.org/v1/gonum/mat"
+)
 
 type LinearModel struct {
 	Coeff []float64
+	Resid []float64
 }
 
 func New() *LinearModel {
@@ -11,8 +14,9 @@ func New() *LinearModel {
 }
 
 func (m *LinearModel) Fit(X [][]float64, y []float64) {
-	c := LinearRegression(X, y)
+	c, resid := LinearRegression(X, y)
 	m.Coeff = c
+	m.Resid = resid
 }
 
 func (m *LinearModel) Predict(n int) []float64 {
@@ -20,7 +24,7 @@ func (m *LinearModel) Predict(n int) []float64 {
 	return []float64{}
 }
 
-func LinearRegression(X [][]float64, y []float64) []float64 {
+func LinearRegression(X [][]float64, y []float64) ([]float64, []float64) {
 	nRows := len(y)
 	nCols := len(X)
 	yMat := mat.NewDense(nRows, 1, nil)
@@ -57,5 +61,15 @@ func LinearRegression(X [][]float64, y []float64) []float64 {
 		c[i] /= R.At(i, i)
 	}
 
-	return c
+	// Residuals
+	resid := make([]float64, nRows)
+	for i := 0; i < nRows; i++ {
+		yHat := c[0]
+		for j := 1; j < len(c); j++ {
+			yHat += X[j-1][i] * c[j]
+		}
+		resid[i] = y[i] - yHat
+	}
+
+	return c, resid
 }

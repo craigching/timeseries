@@ -27,8 +27,9 @@ func (m *AutoRegressiveModel) Fit(x []float64) {
 	}
 	// Save y so we can predict from it
 	m.y = x[m.order:]
-	c := lm.LinearRegression(X, m.y)
+	c, resid := lm.LinearRegression(X, m.y)
 	m.Coeff = c
+	m.Resid = resid
 }
 
 func lag(x []float64, shift, n int) []float64 {
